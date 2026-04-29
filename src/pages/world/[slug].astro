@@ -1,0 +1,148 @@
+---
+import Base from '../../layouts/Base.astro'
+import { getCollection } from 'astro:content'
+
+export async function getStaticPaths() {
+  const entries = await getCollection('world')
+  return entries.map(entry => ({
+    params: { slug: entry.id },
+    props:  { entry },
+  }))
+}
+
+const { entry } = Astro.props
+const Content = entry.rendered?.html
+const { title, type, excerpt, image, tags } = entry.data
+
+const isRegion = type === 'region'
+
+const childEntries = isRegion
+  ? await getCollection('world', (e: any) =>
+      e.data.parentRegion === entry.id && e.data.type !== 'region'
+    )
+  : []
+
+const sortedChildren = childEntries.sort((a: any, b: any) =>
+  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+)
+
+const childTypes = [...new Set(sortedChildren.map((e: any) => e.data.type))]
+
+const groupedChildren = childTypes.reduce((acc: any, t: any) => {
+  acc[t] = sortedChildren.filter((e: any) => e.data.type === t)
+  return acc
+}, {})
+---
+
+<Base title={title} description={excerpt}>
+
+  <div class="region-page">
+
+    <div class="region-main">
+
+      <div class="entry-type">{type}</div>
+      <h1>{title}</h1>
+
+      {image && (
+        <div class="entry-image">
+          <img src={image} alt={title} />
+        </div>
+      )}
+
+      <div class="entry-body" set:html={Content} />
+
+      <div class="post-footer">
+        <a href="/world">← The World</a>
+      </div>
+
+    </div>
+
+    {isRegion && sortedChildren.length > 0 && (
+      <aside class="region-sidebar">
+        {childTypes.map((t: any) => (
+          <div class="sidebar-section">
+            <h2 class="sidebar-section-title">{t}</h2>
+            <ul class="sidebar-list">
+              {groupedChildren[t].map((e: any) => (
+                <li class="sidebar-card">
+                  <a href={`/world/${e.id}`} class="sidebar-card-link">
+                    {e.data.image && (
+                      <div class="sidebar-card-image">
+                        <img src={e.data.image} alt={e.data.title} />
+                      </div>
+                    )}
+                    <div class="sidebar-card-body">
+                      <p class="sidebar-card-title">{e.data.title}</p>
+                      {e.data.excerpt && (
+                        <p class="sidebar-card-excerpt">{e.data.excerpt}</p>
+                      )}
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </aside>
+    )}
+  </div>
+
+    {entry.data.compendium && (
+      <aside class="compendium-ref">
+        <a href={`/compendium/${entry.data.compendium}`}>Compendium entry for the omnipotent cartographer ↗</a>
+      </aside>
+    )}
+
+</Base>
+
+<style is:global>
+
+
+  .entry-image {
+    margin:        1.5rem 0 2rem;
+    border-radius: 3px;
+    overflow:      hidden;
+    border:        1px solid var(--colour-border);
+  }
+
+  .entry-image img {
+    width:   100%;
+    height:  auto;
+    display: block;
+  }
+
+  .entry-body {
+    margin-top: 1.5rem;
+  }
+
+  .post-footer {
+    margin-top:  3rem;
+    padding-top: 1.5rem;
+    border-top:  1px solid var(--colour-border);
+    font-family: var(--font-mono);
+    font-size:   12px;
+  }
+
+  .post-footer a { color: var(--colour-ink-muted); }
+  .post-footer a:hover { color: var(--colour-accent); }
+
+  
+
+.compendium-ref {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(194, 162, 128, 0.3);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.compendium-ref a {
+  color: var(--colour-ink-muted);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+
+.compendium-ref a:hover {
+  color: var(--colour-accent);
+}
+</style>

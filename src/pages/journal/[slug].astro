@@ -1,0 +1,72 @@
+---
+import Base from '../../layouts/Base.astro'
+import { getCollection } from 'astro:content'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('journal')
+  return posts.map(entry => ({
+    params: { slug: entry.id },
+    props:  { entry },
+  }))
+}
+
+const { entry } = Astro.props
+const Content = entry.rendered?.html
+const { title, date, excerpt, relatedFragments } = entry.data
+
+const formattedDate = new Date(date).toLocaleDateString('en-GB', {
+  day: 'numeric', month: 'long', year: 'numeric'
+})
+
+const linked = relatedFragments?.length
+  ? await getCollection('fragments', (f: any) => relatedFragments.includes(f.id))
+  : []
+---
+
+<Base title={title} description={excerpt}>
+
+  <div class="entry-type">
+    Journal · <time datetime={date}>{formattedDate}</time>
+  </div>
+  <h1>{title}</h1>
+
+  <div class="post-body" set:html={Content} />
+
+  {linked.length > 0 && (
+    <div class="related-section">
+      <p class="related-label">Referenced in the world</p>
+      <div class="related-links">
+        {linked.map((f: any) => (
+          <a href={`/journal/${f.id}`} class="related-link">{f.data.title}</a>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <div class="post-footer">
+    <a href="/journal">← All journal entries</a>
+  </div>
+
+</Base>
+
+<style>
+  .post-body {
+    margin-top: 1.5rem;
+  }
+
+  .post-footer {
+    margin-top:  3rem;
+    padding-top: 1.5rem;
+    border-top:  1px solid var(--colour-border);
+    font-family: var(--font-mono);
+    font-size:   12px;
+  }
+
+  .post-footer a {
+    color: var(--colour-ink-muted);
+  }
+
+  .post-footer a:hover {
+    color: var(--colour-accent);
+  }
+</style>

@@ -1,17 +1,363 @@
 ---
+import Base from '../layouts/Base.astro'
+import { getCollection } from 'astro:content'
 
+const allFragments = await getCollection('fragments')
+const recentFragment = allFragments
+  .sort((a: any, b: any) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+  .slice(0, 1)[0]
+
+const allJournal = await getCollection('journal')
+const recentPost = allJournal
+  .sort((a: any, b: any) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+  .slice(0, 1)[0]
+
+const allWorld = await getCollection('world')
+const allCompendium = await getCollection('compendium')
+
+const allEntries = [
+  ...allFragments.map((e: any) => ({ title: e.data.title, date: e.data.update, section: 'Fragments', href: '/fragments/' + e.id })),
+  ...allJournal.map((e: any)   => ({ title: e.data.title, date: e.data.update, section: 'Journal',   href: '/journal/'   + e.id })),
+  ...allWorld.map((e: any)     => ({ title: e.data.title, date: e.data.update, section: 'World',     href: '/world/'     + e.id })),
+  ...allCompendium.map((e: any)=> ({ title: e.data.title, date: e.data.update, section: 'Compendium',href: '/compendium/'+ e.id })),
+]
+
+const sorted = allEntries
+  .filter(e => e.date && e.date.length >= 10)
+  .sort((a, b) => new Date(b.date!).getTime() - new Date(a.date!).getTime())
+
+const grouped: Record<string, typeof sorted> = {}
+for (const entry of sorted) {
+  const day = entry.date!.slice(0, 10)
+  if (!grouped[day]) grouped[day] = []
+  grouped[day].push(entry)
+}
+const recentDays = Object.keys(grouped).slice(0, 5)
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base title="Kuha" description="A world of the ancient past">
+
+  <div class="home-hero">
+    <div class="home-hero-image">
+      <img src="/images/202512-Pd4E9FYMNmxB7U-glazed.jpg" alt="Imaginary Yonder Emblem" />
+    </div>
+    <div class="home-hero-text">
+      <h1 class="home-site-title">Imaginary Yonder</h1>
+      <p class="home-intro-text">
+        The interior of the cave is cool and dry in contrast to the outside noon.
+        The sun at the centre of the faded mural smiles serenely, though you glean
+        from it a sense of concealed rage. A molten core. While the colours can only
+        hint at the original splendour, the longer you investigate the intricate
+        patterns, the louder the image whispers of the past lives that gave birth
+        to it.
+      </p>
+      <div class="home-intro-links">
+        <a href="/start-here" class="home-intro-link home-intro-link--start">Beneath unfamiliar moons →</a>
+        <a href="/world" class="home-intro-link">The geography of Kuha →</a>
+        <a href="/fragments" class="home-intro-link home-intro-link--muted">Browse the fragments →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-columns">
+
+    <div class="home-column">
+      <div class="home-section-header">
+        <span class="home-section-label">Latest fragment</span>
+        <a href="/fragments" class="home-section-all">All fragments →</a>
+      </div>
+      {recentFragment && (
+        <div class="home-card">
+          <div class="entry-card-type">{recentFragment.data.type}</div>
+          <h2 class="home-card-title">
+            <a href={`/fragments/${recentFragment.id}`}>{recentFragment.data.title}</a>
+          </h2>
+          {recentFragment.data.excerpt && (
+            <p class="home-card-excerpt">{recentFragment.data.excerpt}</p>
+          )}
+          <div class="entry-card-tags" style="margin-top: 1rem;">
+            {recentFragment.data.tags.map((tag: any) => (
+              <a href={`/fragments?tag=${tag}`} class="tag">{tag}</a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+
+    <div class="home-column">
+      <div class="home-section-header">
+        <span class="home-section-label">Latest journal entry</span>
+        <a href="/journal" class="home-section-all">All entries →</a>
+      </div>
+      {recentPost && (
+        <div class="home-card">
+          <div class="entry-card-type">
+            {new Date(recentPost.data.date).toLocaleDateString('en-GB', {
+              day: 'numeric', month: 'long', year: 'numeric'
+            })}
+          </div>
+          <h2 class="home-card-title">
+            <a href={`/journal/${recentPost.id}`}>{recentPost.data.title}</a>
+          </h2>
+          {recentPost.data.excerpt && (
+            <p class="home-card-excerpt">{recentPost.data.excerpt}</p>
+          )}
+        </div>
+      )}
+    </div>
+
+  </div>
+
+  <div class="update-log">
+    <div class="home-section-header" style="margin-top: 3rem;">
+      <span class="home-section-label">Recent updates</span>
+    </div>
+    <dl class="update-log-list">
+      {recentDays.map(day => (
+        <>
+          <dt class="update-log-date">
+            {new Date(day).toLocaleDateString('en-GB', {
+              day: 'numeric', month: 'long', year: 'numeric'
+            })}
+          </dt>
+          {grouped[day].map(entry => (
+            <dd class="update-log-entry">
+              <span class="update-log-section">{entry.section}</span>
+              <a href={entry.href} class="update-log-title">{entry.title}</a>
+            </dd>
+          ))}
+        </>
+      ))}
+    </dl>
+  </div>
+
+</Base>
+
+<style>
+  :global(main):has(.home-hero) {
+    max-width:     1700px;
+    padding-left:  3rem;
+    padding-right: 3rem;
+  }
+
+  .home-hero {
+    display:               grid;
+    grid-template-columns: 1fr 1fr;
+    gap:                   3rem;
+    margin-bottom:         4rem;
+    padding-bottom:        4rem;
+    border-bottom:         1px solid var(--colour-border);
+    align-items:           center;
+  }
+
+  .home-hero-image {
+    width:         100%;
+    aspect-ratio:  4 / 3;
+    overflow:      hidden;
+    border-radius: 3px;
+  }
+
+  .home-hero-image img {
+    width:      100%;
+    height:     100%;
+    object-fit: contain;
+  }
+
+  .home-hero-text {
+    display:        flex;
+    flex-direction: column;
+    gap:            2rem;
+  }
+
+  .home-site-title {
+    font-family:    var(--font-mono);
+    font-size:      clamp(3rem, 6vw, 5.5rem);
+    font-weight:    400;
+    letter-spacing: 0.14em;
+    color:          var(--colour-ink);
+    line-height:    1;
+    margin-bottom:  1.5rem;
+  }
+
+  .home-intro-text {
+    font-family: var(--font-serif);
+    font-size:   1.2rem;
+    font-style:  italic;
+    line-height: 1.85;
+    color:       var(--colour-ink-soft);
+  }
+
+  .home-intro-links {
+    display:   flex;
+    gap:       1rem;
+    flex-wrap: wrap;
+  }
+
+  .home-intro-link {
+    font-family:     var(--font-mono);
+    font-size:       13px;
+    letter-spacing:  0.08em;
+    color:           var(--colour-bg);
+    background:      var(--colour-accent);
+    border:          1px solid var(--colour-accent);
+    text-decoration: none;
+    padding:         0.6rem 1.4rem;
+    border-radius:   2px;
+    transition:      all 0.15s;
+  }
+
+  .home-intro-link:hover {
+    background:      #b85c38;
+    border-color:    #b85c38;
+    color:           var(--colour-bg);
+    text-decoration: none;
+  }
+
+  .home-intro-link--start,
+  .home-intro-link--muted {
+    color:      var(--colour-bg);
+    background: var(--colour-accent);
+    border:     1px solid var(--colour-accent);
+  }
+
+  .home-intro-link--start:hover,
+  .home-intro-link--muted:hover {
+    background:   #b85c38;
+    border-color: #b85c38;
+    color:        var(--colour-bg);
+  }
+
+  .home-columns {
+    display:               grid;
+    grid-template-columns: 1fr 1fr;
+    gap:                   3rem;
+  }
+
+  .home-section-header {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     baseline;
+    margin-bottom:   1.25rem;
+    padding-bottom:  0.75rem;
+    border-bottom:   1px solid var(--colour-border);
+  }
+
+  .home-section-label {
+    font-family:    var(--font-mono);
+    font-size:      15px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color:          var(--colour-ink-muted);
+  }
+
+  .home-section-all {
+    font-family:     var(--font-mono);
+    font-size:       11px;
+    letter-spacing:  0.06em;
+    color:           var(--colour-accent);
+    text-decoration: none;
+  }
+
+  .home-section-all:hover {
+    color:           var(--colour-ink);
+    text-decoration: none;
+  }
+
+  .home-card {
+    padding:       1.5rem;
+    background:    var(--colour-bg-soft);
+    border-radius: 3px;
+    border:        1px solid var(--colour-border);
+  }
+
+  .home-card-title {
+    font-family:  var(--font-serif);
+    font-size:    1.3rem;
+    font-weight:  400;
+    margin:       0.4rem 0 0.75rem;
+    line-height:  1.3;
+  }
+
+  .home-card-title a {
+    color:           var(--colour-ink);
+    text-decoration: none;
+    transition:      color 0.15s;
+  }
+
+  .home-card-title a:hover { color: var(--colour-accent); }
+
+  .home-card-excerpt {
+    font-size:   0.95rem;
+    font-style:  italic;
+    color:       var(--colour-ink-muted);
+    line-height: 1.65;
+  }
+
+  /* ── Update log ── */
+  .update-log {
+    margin-top: 3rem;
+  }
+
+  .update-log-list {
+    display:               grid;
+    grid-template-columns: 140px 1fr;
+    gap:                   0.4rem 1.5rem;
+    align-items:           baseline;
+  }
+
+  .update-log-date {
+    font-family:    var(--font-mono);
+    font-size:      11px;
+    letter-spacing: 0.06em;
+    color:          var(--colour-ink-muted);
+    text-transform: uppercase;
+    padding-top:    0.6rem;
+    border-top:     1px solid var(--colour-border);
+    grid-column:    1;
+  }
+
+  .update-log-entry {
+    display:     flex;
+    gap:         0.75rem;
+    align-items: baseline;
+    padding-top: 0.6rem;
+    border-top:  1px solid var(--colour-border);
+    margin:      0;
+    grid-column: 2;
+  }
+
+  .update-log-entry:first-of-type {
+    border-top: none;
+  }
+
+  .update-log-section {
+    font-family:    var(--font-mono);
+    font-size:      10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color:          var(--colour-accent);
+    flex-shrink:    0;
+    min-width:      70px;
+  }
+
+  .update-log-title {
+    font-family:     var(--font-serif);
+    font-size:       0.9rem;
+    color:           var(--colour-ink-soft);
+    text-decoration: none;
+    transition:      color 0.15s;
+  }
+
+  .update-log-title:hover {
+    color:           var(--colour-accent);
+    text-decoration: none;
+  }
+
+  @media (max-width: 700px) {
+    .home-hero             { grid-template-columns: 1fr; }
+    .home-columns          { grid-template-columns: 1fr; }
+    .update-log-list       { grid-template-columns: 1fr; }
+    .update-log-date       { border-top: 1px solid var(--colour-border); padding-top: 1rem; }
+    .update-log-entry      { border-top: none; padding-top: 0.2rem; }
+  }
+</style>

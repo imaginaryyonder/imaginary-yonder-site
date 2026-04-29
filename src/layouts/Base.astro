@@ -1,0 +1,63 @@
+---
+// Base.astro — wraps every page on the site
+// Change the nav here and it updates everywhere
+
+import '../styles/global.css'
+
+interface Props {
+  title: string
+  description?: string
+  dark?: boolean
+}
+
+const { title, description = 'A world of the ancient past', dark = false } = Astro.props
+const currentPath = Astro.url.pathname
+---
+
+<html lang="en" class={dark ? 'compendium-dark' : ''}>
+<style is:global>
+  :root {
+    --color-accent: #E5835E;
+    --color-bg: #FFFDF7;
+    --color-text: #3a2e28;
+    --color-muted: #9a7e6f;
+  }
+</style>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <title>{title} — Imaginary Yonder</title>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="site-title">Imaginary Yonder</a>
+    <nav class="site-nav">
+      <a href="/world" class:list={[{ active: currentPath.startsWith('/world') }]}>
+        The World
+      </a>
+      <a href="/fragments" class:list={[{ active: currentPath.startsWith('/fragments') }]}>
+        The Fragments
+      </a>
+      <a href="/journal" class:list={[{ active: currentPath.startsWith('/journal') }]}>
+        Journal
+      </a>
+       <a href="/start-here" class:list={[{ active: currentPath === '/start-here' }]}>
+    First Time Here
+    </a>
+    </nav>
+  </header>
+
+  <main>
+    <slot />
+    <!-- slot is where each page's content gets inserted -->
+  </main>
+
+  <footer class="site-footer">
+    <p>Imaginary Yonder — a world building project</p>
+  </footer>
+
+</body>
+</html>

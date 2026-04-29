@@ -1,0 +1,296 @@
+---
+import Base from '../../layouts/Base.astro'
+import { getCollection } from 'astro:content'
+
+const allEntries = await getCollection('world')
+
+const regions = allEntries
+  .filter((e: any) => e.data.type === 'region')
+  .sort((a: any, b: any) => a.data.title.localeCompare(b.data.title))
+
+const worldLevel = allEntries
+  .filter((e: any) => e.data.type !== 'region' && !e.data.parentRegion)
+  .sort((a: any, b: any) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+
+const childEntries = allEntries
+  .filter((e: any) => e.data.type !== 'region' && e.data.parentRegion)
+  .sort((a: any, b: any) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+
+function recentChildren(regionId: string, count = 5) {
+  return childEntries
+    .filter((e: any) => e.data.parentRegion === regionId)
+    .slice(0, count)
+}
+---
+
+<Base title="The World" description="The geography and shape of Kuha">
+
+  <div class="world-header">
+    <div class="entry-type">Reference</div>
+    <h1>The World</h1>
+    <p class="world-intro">
+      The geography, regions, and the shape of time in Kuha.
+    </p>
+  </div>
+
+  <!-- Map placeholder — replace with real image when ready -->
+  <div class="map-placeholder">
+    <span>Map of Kuha — coming soon</span>
+  </div>
+
+  <!-- Region grid -->
+  {regions.length > 0 && (
+    <div class="world-section">
+      <h2 class="world-section-title">Regions</h2>
+      <div class="world-grid">
+        {regions.map((region: any) => {
+          const recent = recentChildren(region.id)
+          return (
+            <a href={`/world/${region.id}`} class="world-card">
+              {region.data.image && (
+                <div class="world-card-image">
+                  <img src={region.data.image} alt={region.data.title} />
+                </div>
+              )}
+              <div class="world-card-body">
+  <div class="world-card-header">
+    {region.data.icon && (
+      <img src={region.data.icon} alt="" class="world-card-icon" />
+    )}
+    <h3 class="world-card-title">{region.data.title}</h3>
+  </div>
+                {region.data.excerpt && (
+                  <p class="world-card-excerpt">{region.data.excerpt}</p>
+                )}
+                {recent.length > 0 && (
+                  <ul class="world-card-recent">
+                    {recent.map((e: any) => (
+                      <li>
+                        <span class="world-card-recent-type">{e.data.type}</span>
+                        {e.data.title}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </a>
+          )
+        })}
+      </div>
+    </div>
+  )}
+
+  <!-- World-level entries -->
+  {worldLevel.length > 0 && (
+    <div class="world-section">
+      <h2 class="world-section-title">World</h2>
+      <div class="world-grid">
+        {worldLevel.map((entry: any) => (
+          <a href={`/world/${entry.id}`} class="world-card">
+            {entry.data.image && (
+              <div class="world-card-image">
+                <img src={entry.data.image} alt={entry.data.title} />
+              </div>
+            )}
+            <div class="world-card-body">
+              <div class="entry-card-type">{entry.data.type}</div>
+              <h3 class="world-card-title">{entry.data.title}</h3>
+              {entry.data.excerpt && (
+                <p class="world-card-excerpt">{entry.data.excerpt}</p>
+              )}
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+
+ <aside class="compendium-entrance">
+    <a href="/compendium">(Compendium for the omnipotent cartographer.↗)</a>
+  </aside>
+
+</Base>
+
+<style is:global>
+
+    main:has(.world-header) {
+  max-width:     1200px;
+  padding-left:  3rem;
+  padding-right: 3rem;
+}
+
+  .world-header {
+    margin-bottom:  2rem;
+    padding-bottom: 2rem;
+    border-bottom:  1px solid var(--colour-border);
+  }
+
+  .world-intro {
+    font-style: italic;
+    color:      var(--colour-ink-muted);
+    font-size:  1.05rem;
+    margin-top: 0.5rem;
+  }
+
+  .map-placeholder {
+    width:           100%;
+    height:          200px;
+    background:      var(--colour-bg-soft);
+    border:          1px dashed var(--colour-accent-soft);
+    border-radius:   3px;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    font-family:     var(--font-mono);
+    font-size:       12px;
+    color:           var(--colour-ink-muted);
+    margin-bottom:   3rem;
+    letter-spacing:  0.06em;
+  }
+
+  .world-section {
+    margin-bottom: 3rem;
+  }
+
+  .world-section-title {
+    font-family:    var(--font-mono);
+    font-size:      13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color:          var(--colour-ink-muted);
+    margin:         0 0 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom:  1px solid var(--colour-border);
+    font-style:     normal;
+  }
+
+  .world-grid {
+    display:               grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap:                   1rem;
+  }
+
+  .world-card {
+    background:      var(--colour-bg-soft);
+    border:          1px solid var(--colour-border);
+    border-radius:   3px;
+    text-decoration: none;
+    transition:      border-color 0.15s, background 0.15s;
+    overflow:        hidden;
+    display:         flex;
+    flex-direction:  column;
+  }
+
+  .world-card:hover {
+    border-color:    var(--colour-accent);
+    background:      var(--colour-bg-deep);
+    text-decoration: none;
+  }
+
+  .world-card-image {
+    width:        100%;
+    aspect-ratio: 16 / 9;
+    overflow:     hidden;
+  }
+
+  .world-card-image img {
+    width:      100%;
+    height:     100%;
+    object-fit: cover;
+    filter:     grayscale(100%);
+    transition: filter 0.3s;
+  }
+
+  .world-card:hover .world-card-image img {
+    filter: grayscale(0%);
+  }
+
+  .world-card-body {
+    padding: 1rem;
+    flex:    1;
+  }
+
+  .world-card-title {
+    font-family:  var(--font-serif);
+    font-size:    1.1rem;
+    font-weight:  400;
+    font-style:   normal;
+    color:        var(--colour-ink);
+    margin:       0 0 0.5rem;
+    line-height:  1.3;
+  }
+
+  .world-card-excerpt {
+    font-size:   0.9rem;
+    font-style:  italic;
+    color:       var(--colour-ink-muted);
+    line-height: 1.55;
+    margin:      0 0 0.75rem;
+  }
+
+  .world-card-recent {
+    list-style:  none;
+    margin:      0.75rem 0 0;
+    padding:     0.75rem 0 0;
+    border-top:  1px solid var(--colour-border);
+    display:     flex;
+    flex-direction: column;
+    gap:         0.3rem;
+  }
+
+  .world-card-recent li {
+    font-family: var(--font-mono);
+    font-size:   11px;
+    color:       var(--colour-ink-muted);
+    white-space: nowrap;
+    overflow:    hidden;
+    text-overflow: ellipsis;
+  }
+
+  .world-card-recent-type {
+    color:          var(--colour-accent);
+    margin-right:   0.4rem;
+    text-transform: uppercase;
+    font-size:      10px;
+    letter-spacing: 0.06em;
+  }
+
+  .world-card-header {
+  display:     flex;
+  align-items: center;
+  gap:         0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.world-card-icon {
+  width:         70px;
+  height:        70px;
+  object-fit:    contain;
+  flex-shrink:   0;
+}
+
+.world-card-title {
+  margin: 0;
+}
+
+.compendium-entrance {
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(194, 162, 128, 0.3);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.compendium-entrance a {
+  color: var(--colour-ink-muted);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+
+.compendium-entrance a:hover {
+  color: var(--colour-accent);
+}
+
+
+</style>

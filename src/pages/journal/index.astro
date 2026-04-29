@@ -1,0 +1,198 @@
+---
+import { getCollection } from 'astro:content'
+import Base from '../../layouts/Base.astro'
+
+const entries = await getCollection('journal')
+const sorted = entries.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+)
+
+const allTags = [...new Set(sorted.flatMap(e => e.data.tags))].sort()
+---
+
+<Base title="Journal">
+  <main class="journal-index">
+    <header class="journal-header">
+      <h1>Journal</h1>
+      <p class="journal-subhead">Notes on building Kuha — research, process, and thinking out loud.</p>
+    </header>
+
+    {allTags.length > 0 && (
+      <nav class="tag-filter" aria-label="Filter by tag">
+        <button class="tag-btn active" data-tag="all">All</button>
+        {allTags.map(tag => (
+          <button class="tag-btn" data-tag={tag}>{tag}</button>
+        ))}
+      </nav>
+    )}
+
+    <ul class="journal-list">
+      {sorted.map(entry => (
+        <li class="journal-card" data-tags={entry.data.tags.join(',')}>
+          <a href={`/journal/${entry.id}`} class="journal-card-link">
+            <time class="journal-date" datetime={entry.data.date}>
+              {new Date(entry.data.date).toLocaleDateString('en-AU', {
+                year: 'numeric', month: 'long', day: 'numeric'
+              })}
+            </time>
+            <h2 class="journal-title">{entry.data.title}</h2>
+            {entry.data.excerpt && (
+              <p class="journal-excerpt">{entry.data.excerpt}</p>
+            )}
+            {entry.data.tags.length > 0 && (
+              <ul class="journal-tags">
+                {entry.data.tags.map(tag => (
+                  <li class="journal-tag" data-tag={tag}>{tag}</li>
+                ))}
+              </ul>
+            )}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </main>
+</Base>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.tag-btn')
+  const cards = document.querySelectorAll<HTMLLIElement>('.journal-card')
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.tag
+
+      buttons.forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+
+      cards.forEach(card => {
+        if (tag === 'all') {
+          card.style.display = ''
+        } else {
+          const cardTags = card.dataset.tags?.split(',') ?? []
+          card.style.display = cardTags.includes(tag) ? '' : 'none'
+        }
+      })
+    })
+  })
+
+  // Add inside the existing <script> block, after the buttons.forEach(...)
+const params = new URLSearchParams(window.location.search)
+const preselect = params.get('tag')
+if (preselect) {
+  const match = document.querySelector<HTMLButtonElement>(
+    `.tag-btn[data-tag="${preselect}"]`
+  )
+  if (match) match.click()
+}
+</script>
+
+<style>
+  .journal-index {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+  .journal-header {
+    margin-bottom: 2rem;
+  }
+
+  .journal-subhead {
+    font-family: 'Lora', serif;
+    color: var(--colour-ink-muted);
+    font-style: italic;
+  }
+
+  .tag-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 2rem;
+  }
+
+  .tag-btn {
+ cursor:         pointer;
+    border:         none;
+    background:     rgba(229, 131, 94, 0.1);
+    font-family:    var(--font-mono);
+    font-size:      12px;
+    letter-spacing: 0.05em;
+    color:          var(--colour-accent);
+    padding:        3px 10px;
+    border-radius:  2px;
+    transition:     all 0.15s;
+  }
+
+  .tag-btn:hover { background: rgba(229, 131, 94, 0.2); }
+  
+  .tag-btn.active {
+    background: var(--colour-accent);
+    color: var(--colour-bg);
+  }
+
+.journal-tag {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  background: rgba(229, 131, 94, 0.1);
+  color: var(--colour-accent);
+  padding: 3px 10px;
+  border-radius: 2px;
+}
+  .journal-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .journal-card {
+    border-top: 1px solid var(--colour-border);
+    padding-top: 1.5rem;
+  }
+
+  .journal-card-link {
+    text-decoration: none;
+    colour: inherit;
+    display: block;
+  }
+
+  .journal-card-link:hover .journal-title {
+    colour: var(--colour-accent);
+  }
+
+  .journal-date {
+    font-family: 'Lora', serif;
+    font-size: 0.85rem;
+    colour: var(--colour-muted);
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .journal-title {
+    font-family: 'Lora', serif;
+    font-size: 1.3rem;
+    margin: 0 0 0.6rem;
+    transition: colour 0.2s ease;
+  }
+
+  .journal-excerpt {
+    font-size:   0.95rem;
+    font-style:  italic;
+    color:       var(--colour-ink-muted);
+    line-height: 1.65;
+    margin: 0 0 0.8rem;
+  }
+
+  .journal-tags {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+</style>

@@ -1,0 +1,292 @@
+---
+import Base from '../../layouts/Base.astro'
+import { getCollection } from 'astro:content'
+
+const allFragments = await getCollection('fragments')
+const sorted = allFragments.sort((a: any, b: any) =>
+  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+)
+
+const allTags     = [...new Set(sorted.flatMap((f: any) => f.data.tags))].sort()
+const allRegions  = [...new Set(sorted.map((f: any) => f.data.region).filter(Boolean))].sort()
+const allPeriods  = [...new Set(sorted.map((f: any) => f.data.period).filter(Boolean))].sort()
+const allComposed = [...new Set(sorted.map((f: any) => f.data.composed).filter(Boolean))].sort()
+---
+
+<Base title="The Fragments" description="Texts, images and artefacts from Kuha">
+
+  <div class="entry-type">Collection</div>
+  <h1>The Fragments</h1>
+  <p class="section-intro">
+    What has survived. Oath-texts, administrative records, inscriptions,
+    illustrated tablets — gathered here without claim to completeness.
+  </p>
+
+  <div class="filters">
+
+    <div class="filter-group">
+      <span class="filter-label">Region</span>
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="region" data-value="">All</button>
+        {allRegions.map((r: any) => (
+          <button class="filter-btn" data-filter="region" data-value={r}>{r}</button>
+        ))}
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-label">Period</span>
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="period" data-value="">All</button>
+        {allPeriods.map((p: any) => (
+          <button class="filter-btn" data-filter="period" data-value={p}>{p}</button>
+        ))}
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-label">Composed</span>
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="composed" data-value="">All</button>
+        {allComposed.map((c: any) => (
+          <button class="filter-btn" data-filter="composed" data-value={c}>{c}</button>
+        ))}
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-label">Tags</span>
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="tag" data-value="">All</button>
+        {allTags.map((tag: any) => (
+          <button class="filter-btn" data-filter="tag" data-value={tag}>{tag}</button>
+        ))}
+      </div>
+    </div>
+
+  </div>
+
+  <ul class="entry-list" id="fragment-list">
+    {sorted.map((fragment: any) => (
+<li
+  class="entry-card"
+  data-tags={fragment.data.tags.join(',')}
+  data-region={fragment.data.region ?? ''}
+  data-period={fragment.data.period ?? ''}
+  data-composed={fragment.data.composed ?? ''}
+>
+  <div class="entry-card-inner">
+    {fragment.data.image && (
+      <a href={`/fragments/${fragment.id}`} class="entry-card-thumb">
+        <img src={fragment.data.image} alt={fragment.data.title} />
+      </a>
+    )}
+    <div class="entry-card-content">
+      <div class="entry-card-type">{fragment.data.type}</div>
+      <h2><a href={`/fragments/${fragment.id}`}>{fragment.data.title}</a></h2>
+        {fragment.data.excerpt && (
+          <p class="entry-card-excerpt">{fragment.data.excerpt}</p>
+        )}
+        {(fragment.data.region || fragment.data.period || fragment.data.composed) && (
+          <p class="card-provenance">
+            {fragment.data.region   && <span>Region: {fragment.data.region}</span>}
+            {fragment.data.region && (fragment.data.period || fragment.data.composed) && <span> · </span>}
+            {fragment.data.period   && <span>Period: {fragment.data.period}</span>}
+            {fragment.data.period && fragment.data.composed && <span> · </span>}
+            {fragment.data.composed && <span>Composed: {fragment.data.composed}</span>}
+          </p>
+        )}
+        <div class="entry-card-tags">
+          {fragment.data.tags.map((tag: any) => (
+            <button class="filter-btn" data-filter="tag" data-value={tag}>{tag}</button>
+          ))}
+        </div>
+        </div>
+  </div>
+      </li>
+    ))}
+  </ul>
+
+  <p class="no-results" id="no-results" style="display:none">No fragments match these filters.</p>
+
+</Base>
+
+<style>
+  .section-intro {
+    font-style:    italic;
+    color:         var(--colour-ink-muted);
+    margin-bottom: 2rem;
+    font-size:     1.05rem;
+  }
+
+  .filters {
+    display:        flex;
+    flex-direction: column;
+    gap:            0.75rem;
+    margin-bottom:  2rem;
+    padding-bottom: 1.5rem;
+    border-bottom:  1px solid var(--colour-border);
+  }
+
+  .filter-group {
+    display:     flex;
+    align-items: baseline;
+    gap:         0.75rem;
+    flex-wrap:   wrap;
+  }
+
+  .filter-label {
+    font-family:    var(--font-mono);
+    font-size:      12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color:          var(--colour-ink-muted);
+    min-width:      70px;
+  }
+
+  .filter-bar {
+    display:   flex;
+    flex-wrap: wrap;
+    gap:       0.4rem;
+  }
+
+  .filter-btn {
+    cursor:         pointer;
+    border:         none;
+    background:     rgba(229, 131, 94, 0.1);
+    font-family:    var(--font-mono);
+    font-size:      12px;
+    letter-spacing: 0.05em;
+    color:          var(--colour-accent);
+    padding:        3px 10px;
+    border-radius:  2px;
+    transition:     all 0.15s;
+  }
+
+  .filter-btn:hover { background: rgba(229, 131, 94, 0.2); }
+
+  .filter-btn.active {
+    background: var(--colour-accent);
+    color:      var(--colour-bg);
+  }
+
+  .card-provenance {
+    font-family:    var(--font-mono);
+    font-size:      11px;
+    font-style:     italic;
+    color:          var(--colour-ink-muted);
+    margin:         0.4rem 0 0.5rem;
+    letter-spacing: 0.04em;
+  }
+
+  .no-results {
+    font-style: italic;
+    color:      var(--colour-ink-muted);
+    margin-top: 2rem;
+  }
+
+  .entry-card-inner {
+  display: flex;
+  gap:     1.25rem;
+  align-items: flex-start;
+}
+
+.entry-card-thumb {
+  flex-shrink:   0;
+  width:         200px;
+  height:        200px;
+  overflow:      hidden;
+  border-radius: 2px;
+  display:       block;
+  border:        1px solid var(--colour-border);
+  position:      relative;
+}
+
+.entry-card-thumb img {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+  transition: filter 0.3s;
+  filter:     grayscale(90%);
+}
+
+.entry-card-thumb::after {
+  content:    '';
+  position:   absolute;
+  inset:      0;
+  background: rgba(97, 81, 64, 0.35);
+  transition: opacity 0.3s;
+  mix-blend-mode: multiply;
+}
+
+.entry-card-thumb:hover img {
+  filter: grayscale(0%);
+}
+
+.entry-card-thumb:hover::after {
+  opacity: 0;
+}
+
+.entry-card-thumb img {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+  transition: opacity 0.15s;
+}
+
+.entry-card-thumb:hover img {
+  opacity: 0.85;
+}
+
+.entry-card-content {
+  flex: 1;
+}
+</style>
+
+<script>
+  const buttons = document.querySelectorAll('.filter-btn')
+  const cards   = document.querySelectorAll('#fragment-list .entry-card')
+  const noResults = document.getElementById('no-results')
+
+  const active: Record<string, string> = {
+    region:   '',
+    period:   '',
+    composed: '',
+    tag:      '',
+  }
+
+  function applyFilters() {
+    let visible = 0
+    cards.forEach(card => {
+      const tags     = card.getAttribute('data-tags')?.split(',') ?? []
+      const region   = card.getAttribute('data-region') ?? ''
+      const period   = card.getAttribute('data-period') ?? ''
+      const composed = card.getAttribute('data-composed') ?? ''
+
+      const match =
+        (!active.region   || region === active.region) &&
+        (!active.period   || period === active.period) &&
+        (!active.composed || composed === active.composed) &&
+        (!active.tag      || tags.includes(active.tag))
+
+      ;(card as HTMLElement).style.display = match ? '' : 'none'
+      if (match) visible++
+    })
+    if (noResults) noResults.style.display = visible === 0 ? '' : 'none'
+  }
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.getAttribute('data-filter') ?? ''
+      const value  = btn.getAttribute('data-value') ?? ''
+
+      active[filter] = value
+
+      document.querySelectorAll(`.filter-btn[data-filter="${filter}"]`)
+        .forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+
+      applyFilters()
+    })
+  })
+</script>

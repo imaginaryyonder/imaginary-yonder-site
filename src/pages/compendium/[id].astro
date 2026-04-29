@@ -1,0 +1,161 @@
+---
+import { getCollection } from 'astro:content'
+import Base from '../../layouts/Base.astro'
+
+export async function getStaticPaths() {
+  const entries = await getCollection('compendium')
+  return entries.map(entry => ({
+    params: { id: entry.id },
+    props: { entry },
+  }))
+}
+
+const { entry } = Astro.props
+const { title, type, region, climate, area, elevation, tags, excerpt, relatedWorld } = entry.data
+
+const isRegion = type === 'region'
+
+const childEntries = isRegion
+  ? await getCollection('compendium', (e: any) => e.data.parentRegion === entry.id)
+  : []
+
+const sortedChildren = childEntries.sort((a: any, b: any) =>
+  a.data.title.localeCompare(b.data.title)
+)
+---
+
+<Base title={title} description={excerpt} dark={true}>
+
+  <div class="region-page">
+    <div class="region-main">
+
+      <div class="entry-type">{type}</div>
+      <h1>{title}</h1>
+
+      {excerpt && <p class="entry-excerpt">{excerpt}</p>}
+
+      <dl class="entry-datablock">
+        {climate && (
+          <>
+            <dt>Climate</dt>
+            <dd>{climate}</dd>
+          </>
+        )}
+        {area && (
+          <>
+            <dt>Area</dt>
+            <dd>{area}</dd>
+          </>
+        )}
+        {elevation && (
+          <>
+            <dt>Elevation</dt>
+            <dd>{elevation}</dd>
+          </>
+        )}
+      </dl>
+
+      {tags.length > 0 && (
+        <ul class="entry-tags">
+          {tags.map(tag => (
+            <li>
+              <a href={'/compendium?tag=' + tag} class="tag">{tag}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div class="entry-body" set:html={entry.rendered?.html} />
+
+      <div class="post-footer">
+        <a href="/compendium">← Compendium</a>
+        {relatedWorld && (
+          <>
+            <span class="post-footer-sep">·</span>
+            <a href={'/world/' + relatedWorld}>World entry ↗</a>
+          </>
+        )}
+      </div>
+
+    </div>
+
+    {isRegion && sortedChildren.length > 0 && (
+      <aside class="region-sidebar">
+        <div class="sidebar-section">
+          <h2 class="sidebar-section-title">Entries in this region</h2>
+          <ul class="sidebar-list">
+            {sortedChildren.map((e: any) => (
+              <li class="sidebar-card">
+                <a href={'/compendium/' + e.id} class="sidebar-card-link">
+                  <div class="sidebar-card-body">
+                    <p class="sidebar-card-title">{e.data.title}</p>
+                    {e.data.excerpt && (
+                      <p class="sidebar-card-excerpt">{e.data.excerpt}</p>
+                    )}
+                  </div>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+    )}
+
+  </div>
+
+</Base>
+
+<style is:global>
+  main:has(.region-page) {
+    max-width:     1000px;
+    padding-left:  2rem;
+    padding-right: 2rem;
+  }
+
+  .entry-excerpt {
+    font-family: var(--font-serif);
+    font-style:  italic;
+    color:       var(--colour-ink-muted);
+    margin:      0.5rem 0 1.25rem;
+  }
+
+  .entry-datablock {
+    display:               grid;
+    grid-template-columns: 120px 1fr;
+    gap:                   0.3rem 1rem;
+    margin:                0 0 1.5rem;
+    font-family:           var(--font-mono);
+    font-size:             0.82rem;
+    padding-bottom:        1.5rem;
+    border-bottom:         1px solid var(--colour-border);
+  }
+
+  .entry-datablock dt {
+    font-size:      11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color:          var(--colour-ink-muted);
+    padding-top:    0.1rem;
+  }
+
+  .entry-datablock dd {
+    margin: 0;
+    color:  var(--colour-ink);
+  }
+
+  .entry-tags {
+    list-style: none;
+    padding:    0;
+    margin:     0 0 1.5rem;
+    display:    flex;
+    flex-wrap:  wrap;
+    gap:        0.4rem;
+  }
+
+  .post-footer-sep {
+    margin:      0 0.5rem;
+    color:       var(--colour-ink-muted);
+    font-family: var(--font-mono);
+    font-size:   12px;
+  }
+</style>

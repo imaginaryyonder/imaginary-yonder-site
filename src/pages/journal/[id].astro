@@ -1,0 +1,166 @@
+---
+import { getCollection } from 'astro:content'
+import Base from '../../layouts/Base.astro'
+
+export async function getStaticPaths() {
+  const entries = await getCollection('journal')
+  return entries.map(entry => ({
+    params: { id: entry.id },
+    props: { entry },
+  }))
+}
+
+const { entry } = Astro.props
+const { title, date, tags, excerpt, relatedFragments } = entry.data
+---
+
+<Base title={title}>
+  <main class="journal-entry">
+    <header class="entry-header">
+      <time class="entry-date" datetime={date}>
+        {new Date(date).toLocaleDateString('en-AU', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        })}
+      </time>
+      <h1 class="entry-title">{title}</h1>
+      {excerpt && <p class="entry-excerpt">{excerpt}</p>}
+     {tags.length > 0 && (
+  <ul class="entry-tags">
+    {tags.map(tag => (
+      <li>
+        <a href={`/journal?tag=${tag}`} class="entry-tag">{tag}</a>
+      </li>
+    ))}
+  </ul>
+)}
+    </header>
+
+    <article class="entry-body" set:html={entry.rendered?.html} />
+
+    {relatedFragments.length > 0 && (
+      <aside class="related-fragments">
+        <h2>Related Fragments</h2>
+        <ul>
+          {relatedFragments.map(slug => (
+            <li><a href={`/fragments/${slug}`}>{slug}</a></li>
+          ))}
+        </ul>
+      </aside>
+    )}
+  </main>
+</Base>
+
+<style is:global>
+  .entry-body h2,
+  .entry-body h3 {
+    font-family: 'Cinzel', serif;
+    colour: var(--colour-accent);
+    margin-top: 2rem;
+  }
+
+  .entry-body p {
+    font-family: 'Lora', serif;
+    line-height: 1.75;
+    margin-bottom: 1.2rem;
+  }
+
+  .entry-body a {
+    colour: var(--colour-accent);
+    text-decoration: underline;
+  }
+
+  .entry-body blockquote {
+    border-left: 3px solid var(--colour-accent);
+    padding-left: 1rem;
+    font-style: italic;
+    colour: var(--colour-muted);
+    margin: 1.5rem 0;
+  }
+</style>
+
+<style>
+  .journal-entry {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+  .entry-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--colour-border);
+  }
+
+  .entry-date {
+    font-family: 'Lora', serif;
+    font-size: 0.85rem;
+    colour: var(--colour-muted);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .entry-title {
+    font-family: 'Lora', serif;
+    font-size: 2rem;
+    color: var(--colour-ink);
+    margin: 0 0 0.75rem;
+  }
+
+  .entry-excerpt {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    color: var(--colour-ink-muted);
+    margin: 0 0 1rem;
+  }
+
+  .entry-tags {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+.entry-tag {
+ cursor:         pointer;
+    border:         none;
+    background:     rgba(229, 131, 94, 0.1);
+    font-family:    var(--font-mono);
+    font-size:      12px;
+    letter-spacing: 0.05em;
+    color:          var(--colour-accent);
+    padding:        3px 10px;
+    border-radius:  2px;
+    transition:     all 0.15s;
+  }
+
+  .entry-tag:hover {
+    background: var(--colour-accent);
+    color: var(--colour-bg);
+  }
+
+  .related-fragments {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--colour-accent);
+  }
+
+  .related-fragments h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    color: var(--colour-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .related-fragments ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .related-fragments a {
+    font-family: 'Lora', serif;
+    color: var(--colour-accent);
+    text-decoration: underline;
+  }
+</style>

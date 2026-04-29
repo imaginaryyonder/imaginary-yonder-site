@@ -1,0 +1,103 @@
+---
+import Base from '../../layouts/Base.astro'
+import { getCollection } from 'astro:content'
+
+export async function getStaticPaths() {
+  const fragments = await getCollection('fragments')
+  return fragments.map(entry => ({
+    params: { slug: entry.id },
+    props:  { entry },
+  }))
+}
+
+const { entry } = Astro.props
+const Content = entry.rendered?.html
+const { title, type, tags, region, period, composed, excerpt, related, journalPost, image } = entry.data
+
+const allFragments = related?.length
+  ? await getCollection('fragments', (f: any) => related.includes(f.id))
+  : []
+---
+
+<Base title={title} description={excerpt}>
+
+  <div class="entry-type">{type}</div>
+  <h1>{title}</h1>
+
+  {(region || period || composed) && (
+    <p class="fragment-provenance">
+      {region   && <span>Region: {region}</span>}
+      {region && (period || composed) && <span> · </span>}
+      {period   && <span>Period: {period}</span>}
+      {period && composed && <span> · </span>}
+      {composed && <span>Composed: {composed}</span>}
+    </p>
+  )}
+
+  <div class="entry-meta">
+    {tags.map((tag: any) => (
+      <a href={`/fragments?tag=${tag}`} class="tag">{tag}</a>
+    ))}
+  </div>
+{image && (
+  <div class="entry-image">
+    <img src={image} alt={title} />
+  </div>
+)}
+  <div class="entry-body" set:html={Content} />
+
+  {allFragments.length > 0 && (
+    <div class="related-section">
+      <p class="related-label">Related fragments</p>
+      <div class="related-links">
+        {allFragments.map((f: any) => (
+          <a href={`/fragments/${f.id}`} class="related-link">{f.data.title}</a>
+        ))}
+      </div>
+    </div>
+  )}
+
+  {journalPost && (
+    <div class="journal-aside">
+      <p class="journal-aside-label">From the creator's journal</p>
+      <a href={`/journal/${journalPost.slug}`}>{journalPost.title} →</a>
+    </div>
+  )}
+
+</Base>
+
+<style>
+  .fragment-provenance {
+    font-family:    var(--font-mono);
+    font-size:      12px;
+    font-style:     italic;
+    color:          var(--colour-ink-muted);
+    margin:         0.25rem 0 1rem;
+    letter-spacing: 0.04em;
+  }
+
+  .entry-body {
+    margin-top: 0.5rem;
+  }
+
+  .entry-body > p:first-child::first-letter {
+    float:       left;
+    font-size:   3.6rem;
+    line-height: 0.8;
+    margin:      6px 8px 0 0;
+    font-weight: 600;
+    color:       var(--colour-accent);
+  }
+
+  .entry-image {
+  margin:        1.5rem 0 2rem;
+  border-radius: 3px;
+  overflow:      hidden;
+}
+
+.entry-image img {
+  width:      100%;
+  height:     auto;
+  display:    block;
+}
+</style>
