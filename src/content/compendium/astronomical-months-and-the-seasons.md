@@ -1,11 +1,11 @@
 ---
 title: "Astronomical Months and the Seasons"
-type: "Astronomy"
-date: "2026-03-19"
+date: "2026-03-15"
+updated: "2026-05-08"
 excerpt: "The 13+1 months and four seasons of Kuha."
+type: "astronomy"
 image: ""
 tags:
-  - ""
 ---
 
 | Month       | Days     | Season                                           |
@@ -24,10 +24,9 @@ tags:
 | 12          | 29       | Autumn                                           |
 | 13          | 30       | Winter solstice later in the month (day 25 - 30) |
 | Intercalary | ~24 days | Winter                                           |
-
 ## Standardised Lunisolar Calendar
 
-Kuha is a continent with [two moons](the-two-moons-of-kuha). Many peoples of Kuha track the year by the phases of Luna 1, which has a synodic period of approximately 29.6 days. For the purposes of cross-regional comparison, we will take a standardised lunisolar calendar (below) with a correction period (the "intercalary" month). By this lunisolar calendar, Kuha as 13+1 months of 29-30 days per month, with the exception of the intercalary period which has ~24 days.
+Kuha is a continent with [[The Two Moons of Kuha (Compendium)|two moons]]. Many peoples of Kuha track the year by the phases of Luna 1, which has a synodic period of approximately 29.6 days. For the purposes of cross-regional comparison, we will take a standardised lunisolar calendar (below) with a correction period (the "intercalary" month). By this lunisolar calendar, Kuha as 13+1 months of 29-30 days per month, with the exception of the intercalary period which has ~24 days.
 ## Seasons
 
 Planet H has an axial tilt the same as earth (23.5°) and an orbital ellipse equivalent to earth. This results in four seasons of equal length, astronomically defined. Each season is defined by the solar events of solstices and equinoxes, i.e. winter is the season between the winter solstice and spring equinox, spring is between the spring equinox and summer solstice etc.
