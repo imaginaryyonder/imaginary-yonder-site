@@ -1,11 +1,11 @@
 ---
 title: "Astronomical Months and the Seasons"
 date: "2026-03-15"
-updated: "2026-05-08"
 excerpt: "The 13+1 months and four seasons of Kuha."
 type: "astronomy"
 image: ""
-tags:
+tags: ""
+update: "2026-05-08"
 ---
 
 | Month       | Days     | Season                                           |
