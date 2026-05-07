@@ -1,15 +1,11 @@
 ---
 title: "Fieldnote: Thrice Formed"
 type: "Fieldnotes"
-date: "2025-07-02"
-update: "2026-04-29"
+date: "2026-03-15"
+updated: "2026-05-08"
 excerpt: "A rare cosmogenesis myth from a Northern Itān tribes man."
-region: "western-kuha-steppe"
-period: "unknown"
-composed: "93TOR"
 tags:
   - EthnographerB
-image: "/images/20260211_ThriceFormedExp.jpg"
 ---
 _“After countless formations and abandonments, the first world emerged. It was vast with inhospitable heat. This did not remain._
 
