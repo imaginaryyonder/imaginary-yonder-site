@@ -4,7 +4,8 @@ date: "2026-03-15"
 excerpt: "The 13+1 months and four seasons of Kuha."
 type: "astronomy"
 image: ""
-tags: ""
+tags:
+  - ""
 update: "2026-05-08"
 ---
 
