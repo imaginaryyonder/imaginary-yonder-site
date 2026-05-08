@@ -6,7 +6,7 @@ updated: "2026-05-08"
 excerpt: "The confluence of saltwater and fresh."
 parentRegion: ""
 image: ""
-tags:
+tags: []
 ---
 _Fired clay, formal script. I am still unsure precisely how many hands were involved in the creation of this text, but it seems that the entire set is inscribed by at least three separate hands, though the voice seems to be from a single individual. Style of tablet is typical from the early Sonakiiran golden age._
 
