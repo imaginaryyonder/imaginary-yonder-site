@@ -4,11 +4,11 @@ type: "Fieldnotes"
 date: "2026-03-15"
 update: "2026-05-08"
 excerpt: "A rare cosmogenesis myth from a Northern Itān tribes man."
-tags:
+tags: []
   - EthnographerB
 region: "western-kuha-steppe"
 period: "Unknown"
-composed: "93TOR" 
+composed: "93TOR"
 ---
 _“After countless formations and abandonments, the first world emerged. It was vast with inhospitable heat. This did not remain._
 
@@ -16,7 +16,7 @@ _The second world was modest in breadth, but too dark and cold for nurturing lif
 
 _The third world was formed upon the lessons of the past. It's expanse and climate erring on tough, but with potential to be fostered._
 
-_The name of this land is Sua.”_
+_The name of this land is Sua. :)”_
 
 —
 
