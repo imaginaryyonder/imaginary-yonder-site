@@ -7,7 +7,7 @@ excerpt:      "Forever present."
 image:        ""
 icon:        "/images/icon-region-swir.png"
 tags:
-  - geography
+  - astronomy
 compendium: "the-two-moons-of-kuha"
 ---
 

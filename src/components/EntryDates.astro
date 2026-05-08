@@ -1,0 +1,58 @@
+---
+interface Props {
+  date?: string
+  update?: string
+}
+
+const { date, update } = Astro.props
+
+function formatDate(d: string) {
+  return new Date(d).toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'long', year: 'numeric'
+  })
+}
+---
+
+{(date || update) && (
+  <div class="entry-dates">
+    {date && (
+      <span class="entry-dates-item">
+        <span class="entry-dates-label">Created</span>
+        <time datetime={date}>{formatDate(date)}</time>
+      </span>
+    )}
+    {update && (
+      <span class="entry-dates-item">
+        <span class="entry-dates-label">Revised</span>
+        <time datetime={update}>{formatDate(update)}</time>
+      </span>
+    )}
+  </div>
+)}
+
+<style>
+  .entry-dates {
+    display:     flex;
+    gap:         1.5rem;
+    margin:      0.5rem 0 1.25rem;
+    flex-wrap:   wrap;
+  }
+
+  .entry-dates-item {
+    display:     flex;
+    gap:         0.5rem;
+    align-items: baseline;
+    font-family: var(--font-mono);
+    font-size:   11px;
+    letter-spacing: 0.06em;
+  }
+
+  .entry-dates-label {
+    text-transform: uppercase;
+    color:          var(--colour-ink-muted);
+  }
+
+  time {
+    color: var(--colour-ink-soft);
+  }
+</style>

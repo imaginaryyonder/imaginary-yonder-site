@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content'
 import Base from '../../layouts/Base.astro'
+import EntryDates from '../../components/EntryDates.astro'
 
 export async function getStaticPaths() {
   const entries = await getCollection('compendium')
@@ -31,6 +32,7 @@ const sortedChildren = childEntries.sort((a: any, b: any) =>
 
       <div class="entry-type">{type}</div>
       <h1>{title}</h1>
+      <EntryDates date={entry.data.date} update={entry.data.update} />
 
       {excerpt && <p class="entry-excerpt">{excerpt}</p>}
 
