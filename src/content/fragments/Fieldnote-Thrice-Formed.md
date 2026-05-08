@@ -16,7 +16,7 @@ _The second world was modest in breadth, but too dark and cold for nurturing lif
 
 _The third world was formed upon the lessons of the past. It's expanse and climate erring on tough, but with potential to be fostered._
 
-_The name of this land is Sua. :)”_
+_The name of this land is Sua.”_
 
 —
 
