@@ -4,7 +4,7 @@ type: "Fieldnotes"
 date: "2026-03-15"
 update: "2026-05-08"
 excerpt: "A rare cosmogenesis myth from a Northern Itān tribes man."
-tags: []
+tags:
   - EthnographerB
 region: "western-kuha-steppe"
 period: "Unknown"
