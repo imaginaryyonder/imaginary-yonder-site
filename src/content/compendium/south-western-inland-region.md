@@ -2,6 +2,7 @@
 title:        "South Western Insland Region (SWIR)"
 type:         "region"
 date:         "2026-03-15"
+update: "2026-05-08"
 excerpt:      "Most densely populated basin area of southern western Kuha,the homeland of major civilisational centres."
 image:        ""
 icon:        "/images/icon-region-swir.png"

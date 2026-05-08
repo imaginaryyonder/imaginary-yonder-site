@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content'
 import Base from '../../layouts/Base.astro'
+import EntryDates from '../../components/EntryDates.astro'
 
 export async function getStaticPaths() {
   const entries = await getCollection('journal')
@@ -23,6 +24,7 @@ const { title, date, tags, excerpt, relatedFragments } = entry.data
         })}
       </time>
       <h1 class="entry-title">{title}</h1>
+      <EntryDates date={entry.data.date} update={entry.data.update} />
       {excerpt && <p class="entry-excerpt">{excerpt}</p>}
      {tags.length > 0 && (
   <ul class="entry-tags">

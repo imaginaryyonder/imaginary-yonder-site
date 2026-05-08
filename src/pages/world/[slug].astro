@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro'
 import { getCollection } from 'astro:content'
+import EntryDates from '../../components/EntryDates.astro'
 
 export async function getStaticPaths() {
   const entries = await getCollection('world')
@@ -42,6 +43,7 @@ const groupedChildren = childTypes.reduce((acc: any, t: any) => {
 
       <div class="entry-type">{type}</div>
       <h1>{title}</h1>
+      <EntryDates date={entry.data.date} update={entry.data.update} />
 
       {image && (
         <div class="entry-image">
