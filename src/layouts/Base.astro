@@ -15,15 +15,6 @@ const currentPath = Astro.url.pathname
 ---
 
 <html lang="en" class={dark ? 'compendium-dark' : ''}>
-<style is:global>
-  :root {
-    --color-accent: #E5835E;
-    --color-bg: #FFFDF7;
-    --color-text: #3a2e28;
-    --color-muted: #9a7e6f;
-  }
-</style>
-<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -34,7 +25,14 @@ const currentPath = Astro.url.pathname
 
   <header class="site-header">
     <a href="/" class="site-title">Imaginary Yonder</a>
-    <nav class="site-nav">
+
+    <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav class="site-nav" id="site-nav">
       <a href="/world" class:list={[{ active: currentPath.startsWith('/world') }]}>
         The World
       </a>
@@ -44,15 +42,14 @@ const currentPath = Astro.url.pathname
       <a href="/journal" class:list={[{ active: currentPath.startsWith('/journal') }]}>
         Journal
       </a>
-       <a href="/start-here" class:list={[{ active: currentPath === '/start-here' }]}>
-    First Time Here
-    </a>
+      <a href="/start-here" class:list={[{ active: currentPath === '/start-here' }]}>
+        First Time Here
+      </a>
     </nav>
   </header>
 
   <main>
     <slot />
-    <!-- slot is where each page's content gets inserted -->
   </main>
 
   <footer class="site-footer">
@@ -61,3 +58,19 @@ const currentPath = Astro.url.pathname
 
 </body>
 </html>
+
+<script>
+  const toggle = document.querySelector('.nav-toggle')
+  const nav = document.querySelector('.site-nav')
+
+  toggle?.addEventListener('click', () => {
+    const expanded = toggle.getAttribute('aria-expanded') === 'true'
+    toggle.setAttribute('aria-expanded', String(!expanded))
+    nav?.classList.toggle('is-open')
+  })
+</script>
+
+<style is:global>
+  .nav-toggle {
+    display:        none;
+    flex-direction: column

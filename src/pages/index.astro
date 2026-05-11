@@ -53,10 +53,22 @@ const recentDays = Object.keys(grouped).slice(0, 5)
       to it.
     </p>
     <div class="home-intro-links">
-      <a href="/start-here" class="home-intro-link home-intro-link--start">Beneath unfamiliar moons →</a>
+      <a href="/start-here" class="home-intro-link home-intro-link--start">First time here →</a>
       <a href="/world" class="home-intro-link">The geography of Kuha →</a>
-      <a href="/fragments" class="home-intro-link home-intro-link--muted">Browse the fragments →</a>
+      <a href="/fragments" class="home-intro-link home-intro-link--muted">Fragments from Kuha →</a>
     </div>
+  </div>
+</div>
+
+<div class="home-hero-text-mobile">
+  <h1 class="home-site-title" style="color: var(--colour-ink);">Imaginary Yonder</h1>
+  <p class="home-intro-text" style="color: var(--colour-ink-soft); text-align: center;">
+    The interior of the cave is cool and dry in contrast to the outside noon. The sun at the centre of the faded mural smiles serenely, though you glean from it a sense of concealed rage. A molten core. While the colours can only hint at the original splendour, the longer you investigate the intricate patterns, the louder the image whispers of the past lives that gave birth to it.
+  </p>
+  <div class="home-intro-links" style="justify-content: center; margin-top: 1rem;">
+    <a href="/start-here" class="home-intro-link">First time here →</a>
+    <a href="/world" class="home-intro-link">The geography of Kuha →</a>
+    <a href="/fragments" class="home-intro-link">Fragments from Kuha →</a>
   </div>
 </div>
 
@@ -136,7 +148,7 @@ const recentDays = Object.keys(grouped).slice(0, 5)
 
 <style>
   :global(main):has(.home-hero) {
-    max-width:     100%;
+    max-width:     1900px;
     padding-left:  0;
     padding-right: 0;
     padding-top:   0;
@@ -172,8 +184,8 @@ const recentDays = Object.keys(grouped).slice(0, 5)
       115deg,
       transparent 25%,
       rgba(20, 12, 6, 0.6) 65%,
-      rgba(20, 12, 6, 0.92) 75%,
-      rgba(20, 12, 6, 0.97) 100%
+      rgba(103, 73, 50, 0.92) 75%,
+      rgba(75, 50, 31, 0.97) 100%
     );
   }
 
@@ -189,6 +201,10 @@ const recentDays = Object.keys(grouped).slice(0, 5)
     gap:             1.5rem;
   }
 
+  .home-hero-text-mobile {
+    display: none;
+  }
+  
   .home-site-title {
     font-family:    var(--font-mono);
     font-size:      clamp(2rem, 5vw, 4rem);
@@ -362,11 +378,19 @@ const recentDays = Object.keys(grouped).slice(0, 5)
     text-decoration: none;
   }
 
-  @media (max-width: 700px) {
-    .home-columns    { grid-template-columns: 1fr; padding: 0 1.5rem; }
-    .update-log      { padding: 0 1.5rem; }
-    .update-log-list { grid-template-columns: 1fr; }
-    .update-log-date { border-top: 1px solid var(--colour-border); padding-top: 1rem; }
-    .update-log-entry { border-top: none; padding-top: 0.2rem; }
+@media (max-width: 700px) {
+    .home-hero-text-mobile { display: block; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .home-hero-text-mobile .home-intro-text { max-width: 100%; font-size: 0.9rem; }
+    .home-hero             { height: 100vw; min-height: 220px; }
+    .home-hero-overlay { background: transparent; }
+    .home-hero-text        { display: none; }
+    .home-intro-text { max-width: 100%; font-size: 0.9rem; }
+    .home-columns          { grid-template-columns: 1fr; padding: 0 1.5rem; }
+    .update-log            { padding: 0 1.5rem; }
+    .update-log-list       { grid-template-columns: 1fr; }
+    .update-log-date       { border-top: 1px solid var(--colour-border); padding-top: 1rem; }
+    .update-log-entry      { border-top: none; padding-top: 0.2rem; }
   }
+
+  
 </style>
