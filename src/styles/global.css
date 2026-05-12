@@ -32,7 +32,7 @@ body {
   background:  var(--colour-bg);
   color:       var(--colour-ink-soft);
   font-family: var(--font-serif);
-  font-size:   18px;
+  font-size:   1rem;
   line-height: 1.7;
 }
 

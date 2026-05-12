@@ -195,4 +195,15 @@ const allTags = [...new Set(sorted.flatMap(e => e.data.tags))].sort()
     padding:        2px 8px;
     border-radius:  2px;
   }
+
+  @media (max-width: 700px) {
+  .world-grid {
+    grid-template-columns: 1fr;
+  }
+
+  main:has(.world-header) {
+    padding-left:  1.5rem;
+    padding-right: 1.5rem;
+  }
+}
 </style>

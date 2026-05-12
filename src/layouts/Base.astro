@@ -56,21 +56,81 @@ const currentPath = Astro.url.pathname
     <p>Imaginary Yonder — a world building project</p>
   </footer>
 
+  <script>
+    const toggle = document.querySelector('.nav-toggle')
+    const nav = document.querySelector('.site-nav')
+
+    toggle?.addEventListener('click', () => {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true'
+      toggle.setAttribute('aria-expanded', String(!expanded))
+      nav?.classList.toggle('is-open')
+    })
+  </script>
+
 </body>
 </html>
-
-<script>
-  const toggle = document.querySelector('.nav-toggle')
-  const nav = document.querySelector('.site-nav')
-
-  toggle?.addEventListener('click', () => {
-    const expanded = toggle.getAttribute('aria-expanded') === 'true'
-    toggle.setAttribute('aria-expanded', String(!expanded))
-    nav?.classList.toggle('is-open')
-  })
-</script>
 
 <style is:global>
   .nav-toggle {
     display:        none;
-    flex-direction: column
+    flex-direction: column;
+    gap:            5px;
+    background:     none;
+    border:         none;
+    cursor:         pointer;
+    padding:        0.5rem;
+  }
+
+  .nav-toggle span {
+    display:          block;
+    width:            24px;
+    height:           2px;
+    background:       var(--colour-ink);
+    transition:       all 0.2s ease;
+    transform-origin: center;
+  }
+
+  .nav-toggle[aria-expanded="true"] span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .nav-toggle[aria-expanded="true"] span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .nav-toggle[aria-expanded="true"] span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  @media (max-width: 700px) {
+    .nav-toggle {
+      display: flex;
+    }
+
+    .site-nav {
+      display:        none;
+      position:       absolute;
+      top:            100%;
+      left:           0;
+      right:          0;
+      flex-direction: column;
+      background:     var(--colour-bg-soft);
+      border-bottom:  1px solid var(--colour-border);
+      padding:        1rem 2rem;
+      gap:            1rem;
+      z-index:        100;
+    }
+
+    .site-nav.is-open {
+      display: flex;
+    }
+
+    .site-header {
+      position: relative;
+    }
+
+    .site-title {
+      margin: 0 auto;
+    }
+  }
+</style>
