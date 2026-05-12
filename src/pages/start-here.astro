@@ -13,16 +13,29 @@ import Base from '../layouts/Base.astro'
 
     <ul>
   <li>What would a pre-modern fictive world look like culturally and aesthetically on a landmass that is a bit like the Silk Road + northern America + Patagonia?</li>
-  <li>What happens at cultural crossroads?</li>
-  <li>How is a society's environment reflected in their culture?</li>
   <li>What unique and internally consistent aesthetics could we have in fantasy worlds?</li>
+  <li>How is a society's environment reflected in their culture?</li>
+  <li>What happens at cultural crossroads?</li>
+  <li>How to express the sense of awe coming from experiencing historical memory?</li>
+ <li>How did the <a href="https://www.degruyterbrill.com/document/doi/10.12987/9780300231687-005/html">domus complex</a> come to take over the world?</li>
 </ul>
 <br>
 <p>These are some of the questions driving my world building project of Kuha, an ancient high fantasy world. I'm interested in building some geographical and environmental earth-like constraints to see what kind of societies might plausibly emerge, and what kind of drama may arise from these.</p>
 
 <h2>About the builder</h2>
 
-<p>My name is Eri. I'm a (former?) academic sociolinguist, artist-in-making, and world builder. I'm experimenting my way through a creative practice that combines world building, writing, and art in the pursuit of exploring our own complex world.</p>
+<div class="content-block">
+  <img src="/images/20260208_Variation.png" alt="Imaginary Yonder Emblem" />
+  <div class="content-text">
+    <p>My name is Eri. I'm a (former?) academic sociolinguist, artist-in-making, and world builder. I'm experimenting my way through a creative practice that combines world building, writing, and art in the pursuit of exploring our own complex world.</p>
+    <p>Find me elsewhere online:</p>
+    <ul>
+      <li><a href="https://bsky.app/profile/imaginaryyonder.bsky.social">Bluesky</a> - Unpolished streams of thought, logs of illustration work in progress.</li>
+      <li><a href="https://orcid.org/0000-0002-7534-7047">Academic Publications</a> - List of academic linguistic publications in the areas of sociolinguistics, and comparative linguistics.</li>
+    </ul>
+  </div>
+</div>
+
 
 <h2>AI Statement</h2>
 
@@ -53,5 +66,26 @@ import Base from '../layouts/Base.astro'
     line-height: 1.8;
   }
 
+  .content-block {
+    display:     flex;
+    gap:         2rem;
+    align-items: flex-start;
+  }
+
+  .content-block img {
+    width:      30%;
+    height:     auto;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 700px) {
+    .content-block {
+      flex-direction: column;
+    }
+
+    .content-block img {
+      width: 100%;
+    }
+  }
 
 </style>
