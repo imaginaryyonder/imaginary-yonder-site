@@ -2,7 +2,7 @@
 title: "Solo RPGs as Narrative Experience"
 date: "2025-10-16"
 update: "2025-10-16"
-excerpt: "World building as an attempt to answer your questions about possible worlds."
+excerpt: "Tactile and physical game play as a narrative experience."
 tags: ["How can stories be told in mixed media ways?"]
 relatedFragments: []
 ---
