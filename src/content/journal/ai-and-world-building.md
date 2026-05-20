@@ -52,7 +52,7 @@ I'll continue using AI for tweaking this website. Building the site is something
 
 As everyone keeps saying "it's an evolving space" (because it's true). I may have different thoughts in a few months time, a years time as we learn more about this tool, and as it too will change in response to real-world pressures. I find it useful for myself to clarify my thoughts in writing, and may re-visit this topic in the future as my experience deepens.
 
-### Footnotes
+
 [^1]: Though I would have used [Chronicler](https://chronicler.pro/) had it existed 8 years ago! 
 
 [^2]: I'm hedging my bets that AU subscriptions are going to enschittify. It's already happening with OpenAI [reportedly testing to add advertisements in free and lower paid tiers](https://www.techradar.com/ai-platforms-assistants/chatgpt-is-done-openai-is-rolling-out-ads-to-free-and-paying-users-and-not-everyone-is-happy). I don't want to be in a situation where I've built up a system that relies on AI and having to pay a subscription to keep using that system.
